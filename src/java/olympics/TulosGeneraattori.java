@@ -7,6 +7,7 @@ package olympics;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.zip.ZipEntry;
@@ -27,7 +28,37 @@ import javax.servlet.http.Part;
 public class TulosGeneraattori {
 
     private Part tiedosto;
-    private String taulu="Tulos";
+    private  String taulu="Tulos";
+    private  static String tauluForTulos;
+    private int startYear;
+
+    public TulosGeneraattori() {
+        TheYears years=new TheYears();
+        List<Integer> yearList= years.getYears();
+        startYear=yearList.get(0);
+        endYear=yearList.get(yearList.size()-1);
+    }
+    private int endYear;
+
+    public int getStartYear() {
+        return startYear;
+    }
+
+    public void setStartYear(int startYear) {
+        this.startYear = startYear;
+    }
+
+    public int getEndYear() {
+        return endYear;
+    }
+
+    public void setEndYear(int endYear) {
+        this.endYear = endYear;
+    }
+
+    public static String getTauluForTulos() {
+        return tauluForTulos;
+    }
     private String prevEvent="";
 
     public Part getTiedosto() {
@@ -38,11 +69,11 @@ public class TulosGeneraattori {
         this.tiedosto = tiedosto;
     }
 
-    public String getTaulu() {
+    public  String getTaulu() {
         return taulu;
     }
 
-    public void setTaulu(String taulu) {
+    public  void setTaulu(String taulu) {
         this.taulu = taulu;
     }
     @PersistenceContext
@@ -86,11 +117,19 @@ public class TulosGeneraattori {
                         kentät[4],
                         kentät[5]
                 );
+        tauluForTulos=taulu;
         em.persist(temp);
     }
      @Produces @Named("tulokset")
      public List<Tulos> palautaTuloksetKannasta(){
          return em.createNamedQuery("Tulos.haeKaikki", Tulos.class)
+                 .getResultList();
+     }
+    @Produces @Named("tuloksetVäliltä")
+     public List<Tulos> palautaTuloksetVäliltä(){
+         return em.createNamedQuery("Tulos.haeVäliltä", Tulos.class)
+                 .setParameter("start",this.startYear)
+                 .setParameter("end",this.endYear+1)
                  .getResultList();
      }
 }

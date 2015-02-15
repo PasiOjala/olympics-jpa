@@ -12,6 +12,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.Table;
 
 /**
  *
@@ -19,14 +20,24 @@ import javax.persistence.NamedQuery;
  */
 @Entity
 @NamedQueries(
-    {
-        @NamedQuery(
-            name="Tulos.haeKaikki",
-            query="select t from Tulos t order by t.yearOfEvent,t.positionNumber"
-        )
-    }
+        {
+            @NamedQuery(
+                    name = "Tulos.haeKaikki",
+                    query = "select t from Tulos t order by t.yearOfEvent,t.positionNumber"
+            ),
+
+            @NamedQuery(
+                    name = "Tulos.haeVäliltä",
+                    query = "select t from Tulos t "
+                    + "where t.yearOfEvent between :start and :end"
+                    + " order by t.yearOfEvent,t.positionNumber"
+            )
+
+        }
 )
+//@Table(name=TulosGeneraattori.getTauluForTulos())
 public class Tulos implements Serializable {
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -46,15 +57,15 @@ public class Tulos implements Serializable {
         this.medal = medal;
         this.country = country;
         this.resultTime = resultTime;
-        switch (medal){
+        switch (medal) {
             case "GOLD":
-                this.positionNumber=1;
+                this.positionNumber = 1;
                 break;
             case "SILVER":
-                this.positionNumber=2;
+                this.positionNumber = 2;
                 break;
             case "BRONZE":
-                this.positionNumber=3;
+                this.positionNumber = 3;
                 break;
         }
     }
@@ -106,7 +117,7 @@ public class Tulos implements Serializable {
     public void setResultTime(String resultTime) {
         this.resultTime = resultTime;
     }
-        
+
     public Long getId() {
         return id;
     }
@@ -142,5 +153,5 @@ public class Tulos implements Serializable {
 
     public Tulos() {
     }
-    
+
 }
